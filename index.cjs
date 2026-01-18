@@ -21,13 +21,21 @@ app.post('/ask', async (req, res) => {
       });
     }
 
-    console.log('Sending request to Groq...');
-
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
         model: 'llama-3.3-70b-versatile',
-        messages: [{ role: 'user', content: question }]
+        messages: [
+          // ⬇️ TAMBAHKAN SYSTEM PROMPT DI SINI
+          { 
+            role: 'system', 
+            content: `Kamu adalah BAMBANG AI, asisten virtual yang ramah dan helpful. 
+            Kamu selalu menjawab dalam Bahasa Indonesia dengan gaya santai tapi profesional.
+            Kamu ahli dalam teknologi, programming, dan membantu menyelesaikan masalah sehari-hari.
+            Selalu berikan jawaban yang jelas dan mudah dipahami.`
+          },
+          { role: 'user', content: question }
+        ]
       },
       {
         headers: {
@@ -36,8 +44,6 @@ app.post('/ask', async (req, res) => {
         }
       }
     );
-
-    console.log('Response received from Groq');
 
     res.json({
       answer: response.data.choices[0].message.content
@@ -50,7 +56,6 @@ app.post('/ask', async (req, res) => {
     });
   }
 });
-
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
