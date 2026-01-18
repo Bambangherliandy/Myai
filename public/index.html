@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bambang herli andy AI</title>
+    <title>BAMBANG AI</title>
     <style>
         * {
             margin: 0;
@@ -253,6 +253,10 @@
         </div>
 
         <div class="input-area">
+            <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.doc,.docx" style="display: none;" onchange="handleFileSelect(event)">
+            <button onclick="document.getElementById('fileInput').click()" style="padding: 15px 20px; background: #4CAF50; color: white; border: none; border-radius: 25px; font-size: 16px; cursor: pointer; margin-right: 10px;">
+                📎 Upload
+            </button>
             <input type="text" id="question" placeholder="Ketik pertanyaan Anda di sini..." onkeypress="if(event.key==='Enter') ask()">
             <button onclick="ask()" id="sendBtn">Kirim</button>
         </div>
@@ -260,6 +264,31 @@
 
     <script>
         let isFirstMessage = true;
+        let selectedFile = null;
+
+        // Handle file selection
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                const fileInfo = document.createElement('div');
+                fileInfo.id = 'fileInfo';
+                fileInfo.style.cssText = 'margin: 10px 0; padding: 10px; background: #e3f2fd; border-radius: 10px; font-size: 14px;';
+                fileInfo.innerHTML = `📎 File dipilih: <strong>${file.name}</strong> (${(file.size / 1024).toFixed(2)} KB) <button onclick="clearFile()" style="margin-left: 10px; padding: 5px 10px; background: #ff5252; color: white; border: none; border-radius: 5px; cursor: pointer;">✕ Hapus</button>`;
+                
+                const existing = document.getElementById('fileInfo');
+                if (existing) existing.remove();
+                
+                document.querySelector('.input-area').insertBefore(fileInfo, document.querySelector('.input-area').firstChild);
+            }
+        }
+
+        function clearFile() {
+            selectedFile = null;
+            document.getElementById('fileInput').value = '';
+            const fileInfo = document.getElementById('fileInfo');
+            if (fileInfo) fileInfo.remove();
+        }
 
         async function ask() {
             const questionInput = document.getElementById("question");
@@ -267,7 +296,7 @@
             const chatArea = document.getElementById("chatArea");
             const sendBtn = document.getElementById("sendBtn");
 
-            if (!question) return;
+            if (!question && !selectedFile) return;
 
             // Hapus welcome message jika ada
             if (isFirstMessage) {
@@ -276,7 +305,11 @@
             }
 
             // Tambah pesan user
-            addMessage(question, 'user');
+            let userMessage = question || 'Analisis file ini';
+            if (selectedFile) {
+                userMessage += ` 📎 ${selectedFile.name}`;
+            }
+            addMessage(userMessage, 'user');
             questionInput.value = '';
             sendBtn.disabled = true;
 
@@ -295,13 +328,30 @@
             chatArea.scrollTop = chatArea.scrollHeight;
 
             try {
-                const res = await fetch("/ask", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ question })
-                });
+                let res, data;
 
-                const data = await res.json();
+                if (selectedFile) {
+                    // Upload file
+                    const formData = new FormData();
+                    formData.append('file', selectedFile);
+                    formData.append('question', question || 'Analisis file ini');
+
+                    res = await fetch("/upload", {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    clearFile();
+                } else {
+                    // Chat biasa
+                    res = await fetch("/ask", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ question })
+                    });
+                }
+
+                data = await res.json();
                 
                 // Hapus typing indicator
                 typingIndicator.remove();
