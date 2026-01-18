@@ -44,12 +44,9 @@
     width:100%;
     max-width:920px;
     height:92vh;
-    background:rgba(15,18,35,.75);
-    backdrop-filter:blur(22px);
+    background:transparent;
+    backdrop-filter:blur(2px);
     border-radius:28px;
-    box-shadow:
-      0 0 40px rgba(0,234,255,.15),
-      inset 0 0 0 1px rgba(255,255,255,.08);
     display:flex;
     flex-direction:column;
     overflow:hidden;
@@ -224,18 +221,67 @@
     40%{transform:scale(1.6)}
   }
   
-  /* 📱 RESPONSIVE */
-  @media(max-width:768px){
-    .container{
-      height:100vh;
-      border-radius:0;
-    }
-    .header h1{font-size:20px}
+
+@media(max-width:768px){
+  body{
+    height:100dvh;
   }
-  
+
+  .container{
+    height:95dvh; 
+    max-width:90%; 
+    padding:3px; 
+  }
+
+  .welcome-message h2 {
+    padding-left: 5px;
+    padding-top: 10px;
+    font-size: 20px;
+    color: #00eaff;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.welcome-message p {
+    padding-top: 3px;
+    padding-left: 5px;
+    color: rgb(199, 191, 191);
+    font-size: 11px;
+}
+
+  .chat-area{
+    padding:3px; 
+  }
+
+  .message-bubble{
+    max-width:95%; 
+    font-size:11px; 
+    padding:8px 12px; 
+  }
+
+  #question{
+    font-size:13px;
+    padding:8px 12px; 
+  }
+
+  .typing-indicator{
+    padding:8px 10px;
+  }
+
+  .typing-dot{
+    width:6px;
+    height:6px;
+  }
+
+  button{
+    padding:10px 10px; 
+    font-size:9px;
+  }
+}
+
 </style>
 </head>
-
 <body>
 <div class="container">
   <div class="header">
@@ -248,15 +294,15 @@
 
   <div class="chat-area" id="chatArea">
     <div class="welcome-message">
-      <h2 style="color:#00f2fe">Halo, Explorer 🚀</h2>
-      <p style="color:#b4a9a9; padding-top: 5px;">Saya Teman AI kamu, siap menemani eksplorasi digitalmu <br>dan menemukan solusi bersamaku</p>
+      <h2 class="heading">Selamat datang ✨</h2>
+      <p class="paragraf">Saya Aitech AI kamu, siap menemani eksplorasi digitalmu <br>dan menemukan solusi bersamaku</p>
     </div>
   </div>
 
   <div class="input-area">
     <input type="file" id="fileInput" style="display:none" onchange="handleFileSelect(event)">
-    <button onclick="document.getElementById('fileInput').click()">Upload file</button>
-    <input type="text" id="question" placeholder="Tanya apa aja… teknologi, tugas, ide 🚀" onkeypress="if(event.key==='Enter') ask()">
+    <button onclick="document.getElementById('fileInput').click()">Upload</button>
+    <input type="text" id="question" placeholder="Tanya apa aja… 🚀" onkeypress="if(event.key==='Enter') ask()">
     <button onclick="ask()" id="sendBtn">Send</button>
   </div>
 </div>
