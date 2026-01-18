@@ -218,21 +218,83 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
             .container {
                 height: 100vh;
+                max-height: 100vh;
                 border-radius: 0;
             }
 
+            .header {
+                padding: 20px 15px;
+            }
+
             .header h1 {
-                font-size: 22px;
+                font-size: 20px;
+            }
+
+            .header p {
+                font-size: 12px;
+            }
+
+            .chat-area {
+                padding: 15px;
             }
 
             .message-bubble {
                 max-width: 85%;
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+
+            .message-label {
+                font-size: 11px;
+            }
+
+            .input-area {
+                padding: 15px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            #question {
+                width: 100%;
+                padding: 12px 15px;
+                font-size: 14px;
+                order: 2;
             }
 
             button {
-                padding: 12px 25px;
+                padding: 12px 20px;
+                font-size: 14px;
+                flex: 1;
+            }
+
+            button:first-child {
+                order: 1;
+                flex: 0 0 auto;
+                min-width: 100px;
+            }
+
+            #sendBtn {
+                order: 3;
+                flex: 1;
+            }
+
+            .welcome-message {
+                margin-top: 30px;
+                padding: 0 10px;
+            }
+
+            .welcome-message h2 {
+                font-size: 20px;
+            }
+
+            .welcome-message p {
+                font-size: 13px;
             }
         }
     </style>
