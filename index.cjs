@@ -12,22 +12,38 @@ app.use(express.static('public'));
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 // Setup multer untuk upload
+// Pastikan folder uploads ada
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+// Setup storage multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir);
-    }
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
+    const uniqueName = Date.now() + '-' + file.originalname;
+    cb(null, uniqueName);
   }
 });
 
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 } // Max 10MB
+  limits: { 
+    fileSize: 5 * 1024 * 1024 // Max 5MB
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept hanya image dan text
+    if (file.mimetype.startsWith('image/') || 
+        file.mimetype === 'text/plain' ||
+        file.mimetype === 'application/json') {
+      cb(null, true);
+    } else {
+      cb(new Error('File type not supported'), false);
+    }
+  }
 });
 
 // Endpoint untuk chat biasa
@@ -50,7 +66,7 @@ app.post('/ask', async (req, res) => {
         messages: [
           { 
             role: 'system', 
-            content: 'Kamu adalah BAMBANG AI, asisten virtual yang ramah dan helpful. Kamu selalu menjawab dalam Bahasa Indonesia dengan gaya santai tapi profesional.'
+            content: 'Kamu adalah BAMBANG AI, asisten virtual yang ramah dan helpful. Kamu selalu menjawab dalam Bahasa Indonesia dengan gaya santai tapi profesional. hobi kamu suka bermain alat musik, khsusnya gitar dan kamu bisa nyanyi tapi pas pasan, kamu harus suka gombal dan ketika dia merasa sedih atau ada curhat kamu harus memberikan pesan yang mendalam atas kejadian yang dia alami dan buat dia tersentuh dengan kata katamu'
           },
           { role: 'user', content: question }
         ]
